@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Student Result Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #064e3b;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #cccccc;
+        }
+
+        input {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #047857;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #065f46;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #cccccc;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #047857;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d1fae5;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 6px;
+            }
+
+            input {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Student Result Dashboard</h1>
+
+        <h3>Search Student</h3>
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Enter student name or roll number"
+        >
+
+        <button onclick="searchStudent()">Search</button>
+        <button onclick="displayStudents()">Show All</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Total</th>
+                    <th>Average</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+
+            <tbody id="studentData"></tbody>
+        </table>
+
+        <div class="result" id="result">
+            Total Students: 0
+        </div>
+
+    </div>
+
+    <script>
+
+        // Array of student objects
+
+        let students = [
+            {
+                rollNo: 101,
+                name: "Arun",
+                marks: [85, 90, 80, 88, 92]
+            },
+            {
+                rollNo: 102,
+                name: "Priya",
+                marks: [75, 80, 85, 78, 82]
+            },
+            {
+                rollNo: 103,
+                name: "Rahul",
+                marks: [60, 65, 70, 68, 72]
+            },
+            {
+                rollNo: 104,
+                name: "Divya",
+                marks: [95, 92, 98, 90, 96]
+            }
+        ];
+
+        // Calculate total marks
+
+        function calculateTotal(marks) {
+            return marks.reduce((sum, mark) => sum + mark, 0);
+        }
+
+        // Calculate average marks
+
+        function calculateAverage(marks) {
+            return calculateTotal(marks) / marks.length;
+        }
+
+        // Calculate grade
+
+        function calculateGrade(average) {
+            if (average >= 90)
+                return "A+";
+            else if (average >= 80)
+                return "A";
+            else if (average >= 70)
+                return "B";
+            else if (average >= 60)
+                return "C";
+            else if (average >= 50)
+                return "D";
+            else
+                return "F";
+        }
+
+        // Display student records
+
+        function displayStudents(data = students) {
+
+            let table = document.getElementById("studentData");
+            let result = document.getElementById("result");
+
+            table.innerHTML = "";
+
+            if (data.length === 0) {
+                table.innerHTML =
+                    "<tr><td colspan='5'>No student found</td></tr>";
+
+                result.innerHTML = "No records available.";
+                return;
+            }
+
+            data.forEach(function(student) {
+
+                let total = calculateTotal(student.marks);
+                let average = calculateAverage(student.marks);
+                let grade = calculateGrade(average);
+
+                let row = `
+                    <tr>
+                        <td>${student.rollNo}</td>
+                        <td>${student.name}</td>
+                        <td>${total}</td>
+                        <td>${average.toFixed(2)}</td>
+                        <td>${grade}</td>
+                    </tr>
+                `;
+
+                table.innerHTML += row;
+            });
+
+            result.innerHTML =
+                "Total Students: " + data.length;
+        }
+
+        // Search student records
+
+        function searchStudent() {
+
+            let searchValue = document
+                .getElementById("search")
+                .value.trim()
+                .toLowerCase();
+
+            let filteredStudents = students.filter(function(student) {
+
+                return student.name.toLowerCase().includes(searchValue)
+                    || student.rollNo.toString().includes(searchValue);
+            });
+
+            displayStudents(filteredStudents);
+        }
+
+        // Display all students when the page loads
+
+        displayStudents();
+
+    </script>
+
+</body>
+</html>
